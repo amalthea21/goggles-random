@@ -10,7 +10,7 @@ section .text
     extern get_random
     extern print_number
     extern saved_rsp
-    extern init_random_engine  ; new external function
+    extern init_random_engine
 
 _start:
     ; save original stack pointer for get_args
@@ -32,7 +32,7 @@ _start:
     ; generate random number in range [min, max]
     mov rdi, r12            ; min
     mov rsi, r13            ; max
-    ; rdx already has systime for optional entropy mixing
+    ; rdx already has systime for entropy mixing
     call get_random
     ; rax = random number
 
