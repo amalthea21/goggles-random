@@ -68,9 +68,14 @@ pcg_random:
     mov rax, [current_seed]
 
     ; update state: state = state * 6364136223846793005 + 1442695040888963407
-    mov rdx, 6364136223846793005
+    ; use two 32 bit loads for the 64 bit constant
+    mov rdx, 6364136223846793005 & 0xFFFFFFFF
+    or rdx, (6364136223846793005 >> 32) << 32
     mul rdx
-    add rax, 1442695040888963407
+    ; Add the constant 1442695040888963407
+    mov rdx, 1442695040888963407 & 0xFFFFFFFF
+    or rdx, (1442695040888963407 >> 32) << 32
+    add rax, rdx
     mov [current_seed], rax
 
     ; generate output: xorshift and rotation
