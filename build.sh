@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# build script for goggles-random assembly project
-# usage: ./build.sh [clean|run]
-
 set -e
 
 SRC_DIR="src"
@@ -19,7 +16,6 @@ mkdir -p "$OBJ_DIR" "$BIN_DIR" 2>/dev/null
 
 clean() {
     rm -rf "$OBJ_DIR" "$BIN_DIR" 2>/dev/null
-    echo -e "${GREEN}✓ Clean complete${NC}"
 }
 
 build() {
@@ -31,19 +27,17 @@ build() {
     for asm_file in "$SRC_DIR"/*.asm; do
         if [ -f "$asm_file" ]; then
             filename=$(basename "$asm_file" .asm)
-            if ! nasm -f elf64 -I"$INC_DIR/" -o "$OBJ_DIR/$filename.o" "$asm_file" 2>&1; then
-                echo -e "${RED}Error: Assembly failed for $filename.asm${NC}"
+            if ! nasm -f elf64 -I"$INC_DIR/" -o "$OBJ_DIR/$filename.o" "$asm_file" 2>/dev/null; then
+                echo -e "${RED}Assembly failed for $filename.asm${NC}"
                 exit 1
             fi
         fi
     done
 
-    if ! ld -o "$BIN_DIR/$TARGET" "$OBJ_DIR"/*.o 2>&1; then
-        echo -e "${RED}Error: Linking failed${NC}"
+    if ! ld -o "$BIN_DIR/$TARGET" "$OBJ_DIR"/*.o 2>/dev/null; then
+        echo -e "${RED}Linking failed${NC}"
         exit 1
     fi
-
-    echo -e "${GREEN}✓ Build successful: $BIN_DIR/$TARGET${NC}"
 }
 
 run() {
@@ -51,20 +45,25 @@ run() {
         build
     fi
     "$BIN_DIR/$TARGET"
+    EXIT_CODE=$?
+    echo -e "${GREEN}Exit code: $EXIT_CODE${NC}"
 }
 
 case "${1:-build}" in
     clean)
         clean
+        echo -e "${GREEN}Clean complete${NC}"
         ;;
     run)
+        build
         run
         ;;
     build)
         build
+        echo -e "${GREEN}Build successful: $BIN_DIR/$TARGET${NC}"
         ;;
     *)
-        echo "Usage: $0 {build|clean|run}"
+        echo -e "${RED}Usage: $0 {build|clean|run}${NC}"
         exit 1
         ;;
 esac
