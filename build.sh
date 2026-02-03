@@ -1,18 +1,16 @@
 #!/bin/bash
 
-# Build script for goggles-random assembly project
-# Usage: ./build.sh [clean|run]
+# build script for goggles-random assembly project
+# usage: ./build.sh [clean|run]
 
-set -e  # Exit on error
+set -e
 
-# Configuration
 SRC_DIR="src"
 INC_DIR="include"
 OBJ_DIR="obj"
 BIN_DIR="bin"
 TARGET="goggles-random"
 
-# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
@@ -33,17 +31,17 @@ build() {
     for asm_file in "$SRC_DIR"/*.asm; do
         if [ -f "$asm_file" ]; then
             filename=$(basename "$asm_file" .asm)
-            nasm -f elf64 -I"$INC_DIR/" -o "$OBJ_DIR/$filename.o" "$asm_file" 2>&1 | grep -v "^$" || {
+            if ! nasm -f elf64 -I"$INC_DIR/" -o "$OBJ_DIR/$filename.o" "$asm_file" 2>&1; then
                 echo -e "${RED}Error: Assembly failed for $filename.asm${NC}"
                 exit 1
-            }
+            fi
         fi
     done
 
-    ld -o "$BIN_DIR/$TARGET" "$OBJ_DIR"/*.o 2>&1 | grep -v "^$" || {
+    if ! ld -o "$BIN_DIR/$TARGET" "$OBJ_DIR"/*.o 2>&1; then
         echo -e "${RED}Error: Linking failed${NC}"
         exit 1
-    }
+    fi
 
     echo -e "${GREEN}✓ Build successful: $BIN_DIR/$TARGET${NC}"
 }
