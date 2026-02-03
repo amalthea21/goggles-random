@@ -1,6 +1,6 @@
 # Goggles Random
 
-NASM Linux x86-64 random number generator using systime for seeding
+NASM random number generator using systime for seeding
 
 ## Features:
 - get random number in range x, y
@@ -31,4 +31,5 @@ For running it, you run the build script with the run argument.
 ## Limitations:
 
 - Numbers can only be 8-byte big (2^64-1)
+
 
