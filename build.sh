@@ -44,15 +44,14 @@ run() {
     if [ ! -f "$BIN_DIR/$TARGET" ]; then
         build
     fi
-    "$BIN_DIR/$TARGET"
-    EXIT_CODE=$?
-    echo -e "${GREEN}Exit code: $EXIT_CODE${NC}"
+    "$BIN_DIR/$TARGET" || EXIT_CODE=$?
+    echo ${EXIT_CODE:-0}
 }
 
 case "${1:-build}" in
     clean)
         clean
-        echo -e "${GREEN}Clean complete${NC}"
+        echo -e "${GREEN}Success${NC}"
         ;;
     run)
         build
@@ -60,7 +59,7 @@ case "${1:-build}" in
         ;;
     build)
         build
-        echo -e "${GREEN}Build successful: $BIN_DIR/$TARGET${NC}"
+        echo -e "${GREEN}Success${NC}"
         ;;
     *)
         echo -e "${RED}Usage: $0 {build|clean|run}${NC}"
