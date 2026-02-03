@@ -44,7 +44,7 @@ run() {
     if [ ! -f "$BIN_DIR/$TARGET" ]; then
         build
     fi
-    "$BIN_DIR/$TARGET" || EXIT_CODE=$?
+    "$BIN_DIR/$TARGET" "$@" || EXIT_CODE=$?
     echo ${EXIT_CODE:-0}
 }
 
@@ -55,7 +55,8 @@ case "${1:-build}" in
         ;;
     run)
         build
-        run
+        shift
+        run "$@"
         ;;
     build)
         build
