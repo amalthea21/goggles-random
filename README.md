@@ -25,9 +25,10 @@ For running it, you run the build script with the run argument.
 ./build.sh run [MIN] [MAX]
 ```
 
-- Min: Min must be under 1-byte big (0-255)
+- Min: Min must be under 8-byte big (2^64-1)
 - Max: ^
 
 ## Limitations:
 
-- Numbers can only be 1-byte big (0-255)
+- Numbers can only be 8-byte big (2^64-1)
+
