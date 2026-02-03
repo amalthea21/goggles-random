@@ -1,1 +1,26 @@
+# IDE
 .idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+bin/
+obj/
+*.o
+*.out
+*.elf
+
+# Executable (if named differently)
+goggles-random
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# OS specific
+.DS_Store
+Thumbs.db
