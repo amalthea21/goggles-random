@@ -90,7 +90,7 @@ pcg_random:
     ret
 
 get_random:
-    ; generate random number in range [min, max]
+    ; generate random number in range [min, max] using rejection sampling
     ; input: rdi = min, rsi = max
     ; output: rax = random number in [min, max]
 
@@ -98,6 +98,7 @@ get_random:
     push r12
     push r13
     push r14
+    push r15
 
     mov r12, rdi            ; r12 = min
     mov r13, rsi            ; r13 = max
@@ -108,17 +109,36 @@ get_random:
     inc rax                 ; rax = range_size
     mov r14, rax            ; r14 = range_size
 
+    ; calculate rejection threshold to eliminate modulo bias
+    ; threshold = (2^64 / range_size) * range_size
+    ; this is the largest multiple of range_size that fits in 64 bits
+
+    ; first calculate 2^64 / range_size (using 2^64 - 1 as approximation)
+    mov rax, -1             ; rax = 0xFFFFFFFFFFFFFFFF (2^64 - 1)
+    xor rdx, rdx            ; clear rdx for division
+    div r14                 ; rax = floor((2^64 - 1) / range_size), rdx = remainder
+
+    ; multiply back to get the threshold
+    mul r14                 ; rax = (floor((2^64 - 1) / range_size)) * range_size
+    mov r15, rax            ; r15 = rejection threshold
+
+.retry:
     ; generate random number using xorshift64*
     call xorshift64star     ; rax = random 64-bit number
 
-    ; get modulo range_size (using 128-bit division for correctness)
+    ; rejection sampling: if random >= threshold, retry
+    cmp rax, r15
+    jae .retry              ; if rax >= threshold, get new random number
+
+    ; now we have unbiased random number, take modulo
     xor rdx, rdx            ; clear rdx for division
-    div r14                 ; rdx = rax % range_size
+    div r14                 ; rdx = rax % range_size (unbiased)
 
     ; add min to get final value in [min, max]
     mov rax, rdx
     add rax, r12
 
+    pop r15
     pop r14
     pop r13
     pop r12
