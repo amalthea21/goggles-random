@@ -27,14 +27,14 @@ build() {
     for asm_file in "$SRC_DIR"/*.asm; do
         if [ -f "$asm_file" ]; then
             filename=$(basename "$asm_file" .asm)
-            if ! nasm -f elf64 -I"$INC_DIR/" -o "$OBJ_DIR/$filename.o" "$asm_file" 2>/dev/null; then
+            if ! nasm -f elf64 -I"$INC_DIR/" -o "$OBJ_DIR/$filename.o" "$asm_file"; then
                 echo -e "${RED}Assembly failed for $filename.asm${NC}"
                 exit 1
             fi
         fi
     done
 
-    if ! ld -o "$BIN_DIR/$TARGET" "$OBJ_DIR"/*.o 2>/dev/null; then
+    if ! ld -o "$BIN_DIR/$TARGET" "$OBJ_DIR"/*.o; then
         echo -e "${RED}Linking failed${NC}"
         exit 1
     fi
@@ -44,14 +44,13 @@ run() {
     if [ ! -f "$BIN_DIR/$TARGET" ]; then
         build
     fi
-    "$BIN_DIR/$TARGET" "$@" || EXIT_CODE=$?
-    echo ${EXIT_CODE:-0}
+    "$BIN_DIR/$TARGET" "$@"
 }
 
 case "${1:-build}" in
     clean)
         clean
-        echo -e "${GREEN}Success${NC}"
+        echo -e "${GREEN}Build cleaned${NC}"
         ;;
     run)
         build
@@ -60,7 +59,7 @@ case "${1:-build}" in
         ;;
     build)
         build
-        echo -e "${GREEN}Success${NC}"
+        echo -e "${GREEN}Build successful${NC}"
         ;;
     *)
         echo -e "${RED}Usage: $0 {build|clean|run}${NC}"

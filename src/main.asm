@@ -8,6 +8,7 @@ section .text
     extern get_systime  ; declare external function
     extern parse_range  ; ^
     extern get_random   ; ^
+    extern print_number ; ^
     extern saved_rsp    ; declare external variable
 
 
@@ -34,8 +35,11 @@ _start:
 
     mov [random], rax       ; store random number
 
-    ; exit with random number (modulo 256 for exit code)
+    ; print random number
+    mov rax, [random]
+    call print_number
+
+    ; exit with success code (0)
     mov rax, SYS_EXIT
-    mov rdi, [random]
-    and rdi, 0xFF           ; ensure exit code is 0-255
+    xor rdi, rdi           ; exit code 0
     syscall

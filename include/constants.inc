@@ -1,9 +1,15 @@
-; Time Constants
-NANOSECONDS_PER_SECOND equ 1000000000
-
 ; System call numbers
-SYS_CLOCK_GETTIME equ 228
-SYS_EXIT equ 60
+%define SYS_EXIT          60
+%define SYS_WRITE         1
+%define SYS_CLOCK_GETTIME 228
 
-; Clock Types
-CLOCK_REALTIME equ 0
+; File descriptors
+%define STDIN             0
+%define STDOUT            1
+%define STDERR            2
+
+; Clock IDs
+%define CLOCK_REALTIME    0
+
+; Constants
+%define NANOSECONDS_PER_SECOND 1000000000
