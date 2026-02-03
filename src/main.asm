@@ -5,16 +5,19 @@ section .bss
 
 section .text
     global _start
-    extern get_systime  ; declare external function
-    extern parse_range  ; ^
-    extern get_random   ; ^
-    extern print_number ; ^
-    extern saved_rsp    ; declare external variable
-
+    extern get_systime
+    extern parse_range
+    extern get_random
+    extern print_number
+    extern saved_rsp
+    extern init_random_engine  ; new external function
 
 _start:
     ; save original stack pointer for get_args
     mov [saved_rsp], rsp
+
+    ; Initialize random engine with entropy
+    call init_random_engine
 
     ; get min and max from command line arguments
     call parse_range
@@ -22,14 +25,14 @@ _start:
     mov r12, rdi            ; save min
     mov r13, rsi            ; save max
 
-    ; get system time
+    ; Optional: mix in system time for additional entropy per call
     call get_systime
-    ; rax = systime in nanoseconds
+    mov rdx, rax            ; use systime as additional entropy
 
     ; generate random number in range [min, max]
     mov rdi, r12            ; min
     mov rsi, r13            ; max
-    mov rdx, rax            ; systime
+    ; rdx already has systime for optional entropy mixing
     call get_random
     ; rax = random number
 

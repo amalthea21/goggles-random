@@ -2,6 +2,7 @@
 %define SYS_EXIT          60
 %define SYS_WRITE         1
 %define SYS_CLOCK_GETTIME 228
+%define SYS_GETPID        39
 
 ; File descriptors
 %define STDIN             0
