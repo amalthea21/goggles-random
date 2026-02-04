@@ -16,7 +16,7 @@ _start:
     ; save original stack pointer for get_args
     mov [saved_rsp], rsp
 
-    ; Initialize random engine with entropy
+    ; initialize random engine with entropy
     call init_random_engine
 
     ; get min and max from command line arguments
@@ -25,7 +25,7 @@ _start:
     mov r12, rdi            ; save min
     mov r13, rsi            ; save max
 
-    ; Optional: mix in system time for additional entropy per call
+    ; mix in system time for additional entropy per call
     call get_systime
     mov rdx, rax            ; use systime as additional entropy
 
